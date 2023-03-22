@@ -1,65 +1,73 @@
-from sqlalchemy import Column, ForeignKey, Integer, String,Boolean
-from sqlalchemy.orm import relationship
+import os
+import sys
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+from eralchemy2 import render_ergit 
 
 Base = declarative_base()
-
-class Follower(Base):
-    __tablename__='follower'
-    id-Column(Integer,primary_key-True)
-    from_id-Column(Integer,ForeignKey('person.id'))
-    from_user=relationship(Person)
-    to_id-Column(Integer,ForeignKey('person.id'))
-    to_user-relationship(Person)
-
-
 
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    username = Column(String(250), nullable=False)
-    email = Column(String(250), nullable=False,unique=True)
-    password = Column(String(250), nullable=False)
-    favorites = relationship('Favorite', backref='user')
-
-class Character(Base):
-    __tablename__ = 'character'
-    id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
-    height = Column(String(250))
-    mass = Column(String(250))
-    hair_color = Column(String(250))
-    skin_color = Column(String(250))
-    eye_color = Column(String(250))
-    birth_year = Column(String(250))
-    gender = Column(String(250))
-    homeworld = Column(String(250))
-    favorites = relationship('Favorite', backref='character')
+    fav_planets = relationship('Fav_planets', backref='user', lazy=True)
+    fav_characters= relationship('Fav_characters', backref='user', lazy=True)
+    fav_species = relationship('Fav_species', backref='user', lazy=True)
 
-class Planet(Base):
-    __tablename__ = 'planet'
+class Planets(Base):
+    __tablename__ = 'planets'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
-    rotation_period = Column(String(250))
-    orbital_period = Column(String(250))
-    diameter = Column(String(250))
-    climate = Column(String(250))
-    gravity = Column(String(250))
-    terrain = Column(String(250))
-    surface_water = Column(String(250))
-    population = Column(String(250))
-    favorites = relationship('Favorite', backref='planet')
+    planet_name = Column(String)
+    planet_diameter = Column(String)
+    planet_gravity = Column(String)
+    planet_population = Column(String)
+    planet_climate = Column(String)
+    planet_terrain = Column(String)
+    planet_created = Column(String)
 
-class Favorite(Base):
-    __tablename__ = 'favorite'
+class Characters(Base):
+    __tablename__ = 'characters'
+    id = Column(Integer, primary_key=True)
+    character_name = Column(String)
+    character_height = Column(String)
+    character_mass = Column(String)
+    character_gender = Column(String)
+    character_created = Column(String)
+    character_homeworld = Column(String)
+    character_url = Column(String)
+
+class Species(Base):
+    __tablename__ = 'species'
+    id = Column(Integer, primary_key=True)
+    species_name = Column(String)
+    species_clasification = Column(String)
+    species_designation = Column(String)
+    species_homeworld = Column(String)
+    species_language = Column(String)
+    species_people = Column(String)
+    species_crated = Column(String)
+
+class Fav_planets(Base):
+    __tablename__ = 'fav_planets'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'))
-    character_id = Column(Integer, ForeignKey('character.id'))
-    planet_id = Column(Integer, ForeignKey('planet.id'))
-   
+    planets_id = Column(Integer, ForeignKey('planets.id'))
 
-engine = create_engine('postgresql://username:password@localhost/database_name')
-Base.metadata.create_all(engine)
+class Fav_characters(Base):
+    __tablename__ = 'fav_characters'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    characters_id = Column(Integer, ForeignKey('characters.id'))
 
-render_er(Base,'diagram.png')
+class Fav_species(Base):
+    __tablename__ = 'fav_species'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    species_id = Column(Integer, ForeignKey('species.id'))
+
+    def to_dict(self):
+        return {}
+
+render_er(Base, 'diagram.png')
